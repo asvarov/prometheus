@@ -1,0 +1,27 @@
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 30s
+  repeat_interval: 3h
+  receiver: 'telegram'
+  routes:
+    - match:
+        severity: high_load
+      continue: true
+      receiver: telegram
+
+    - match:
+        severity: hdd
+      continue: true
+      receiver: telegram
+
+    - match:
+        severity: host_down
+      continue: true
+      receiver: telegram
+
+receivers:
+ - name: 'telegram'
+   webhook_configs:
+   - send_resolved: true
+     url: 'http://alertmanager-bot:8081'

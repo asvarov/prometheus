@@ -1,0 +1,37 @@
+groups:
+- name: targets
+  rules:
+
+  - alert: Host_is_Down
+    expr: up{job="nodeexporter"} == 0
+    for: 30s
+    labels:
+      severity: host_down
+    annotations:
+      summary: "Host {{ $labels.instance }} is down"
+      description: "Host {{ $labels.instance }} has been down for more than 2 minutes."
+
+- name: host
+  rules:
+
+  - alert: High_Load
+    expr: node_load1 > 1
+    for: 30s
+    labels:
+      severity: high_load
+    annotations:
+      summary: "Instance {{ $labels.instance }} under high load"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} is under high load."
+
+  - alert: High_Storage_Load
+    expr: (100.0-100 * ((node_filesystem_avail{fstype=~"(ext.|xfs)",job="nodeexporter"} / 1000 / 1000 ) / (node_filesystem_size{fstype=~"(ext.|xfs)",job="noeexporter"} / 1024 / 1024))) > 85
+    for: 30s
+    labels:
+      severity: hdd
+    annotations:
+      title: 'Less tan 15% HDD space left'
+      summary: "Server storage is almost full"
+      description: "Host storage usage is {{ humanize $value }}%. Reported by instance {{ $labels.instance }} of job {{ $label.job }}."
+      value: '{{ $value | humanize }}%'
+      device: '{{ $labels.device }}'
+      mount_point: '{{ $labels.mountpoint }}'

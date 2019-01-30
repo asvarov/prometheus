@@ -1,0 +1,46 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      monitor: 'Alertmanager'
+
+rule_files:
+  - 'alert.rules'
+  # - "first.rules"
+  # - "second.rules"
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['localhost:9090']
+           labels:
+             group: 'host'
+
+  - job_name: 'b2b-01'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-01.test.lab:9100']
+           labels:
+             group: 'targets'
+
+  - job_name: 'b2b-02'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-02.test.lab:9100']
+           labels:
+             group: 'targets'
+
+  - job_name: 'host_prometheus'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['192.168.10.52:9100']
+           labels:
+             group: 'targets'
