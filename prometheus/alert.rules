@@ -16,7 +16,7 @@ groups:
 
   - alert: High_Load
     expr: node_load1 > 1
-    for: 30s
+    for: 90s
     labels:
       severity: high_load
     annotations:
@@ -24,7 +24,7 @@ groups:
       description: "{{ $labels.instance }} of job {{ $labels.job }} is under high load."
 
   - alert: High_Storage_Load
-    expr: (100.0-100 * ((node_filesystem_avail{fstype=~"(ext.|xfs)",job="nodeexporter"} / 1000 / 1000 ) / (node_filesystem_size{fstype=~"(ext.|xfs)",job="noeexporter"} / 1024 / 1024))) > 85
+    expr: (100.0-100 * ((node_filesystem_avail{fstype=~"(ext.|xfs)",job="nodeexporter"} / 1000 / 1000 ) / (node_filesystem_size{fstype=~"(ext.|xfs)",job="nodeexporter"} / 1024 / 1024))) > 85
     for: 30s
     labels:
       severity: hdd
@@ -35,3 +35,30 @@ groups:
       value: '{{ $value | humanize }}%'
       device: '{{ $labels.device }}'
       mount_point: '{{ $labels.mountpoint }}'
+
+  - alert: Alive_Mysql
+    expr: mysql_up == 0
+    for: 30s
+    labels:
+      severity: alive_myqsl
+    annotations:
+      summary: "Mysql on host {{ $labels.instance }} DOWN"
+      description: "MySQL Server {{ $labels.instance }} of job {{ $labels.job }} is DOWN."
+
+  - alert: Alive_Httpd
+    expr: apache_up == 0
+    for: 30s
+    labels:
+      severity: alive_httpd
+    annotations:
+      summary: "Httpd on host {{ $labels.instance }} DOWN"
+      description: "Apache Server {{ $labels.instance }} of job {{ $labels.job }} is DOWN."
+
+  - alert: Mssql_high_load
+    expr: ( mssql_available_physical_memory_kb * 100 / mssql_total_page_file_kb ) < 65
+    for: 30s
+    labels:
+      severity: load_mssql
+    annotations:
+      summary: "Mssql on host {{ $labels.instance }} under high load."
+      description: "MySQL Server {{ $labels.instance }} of job {{ $labels.job }} under high load."

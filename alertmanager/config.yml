@@ -16,7 +16,17 @@ route:
       receiver: telegram
 
     - match:
+        severity: alive_httpd
+      continue: true
+      receiver: telegram
+
+    - match:
         severity: host_down
+      continue: true
+      receiver: telegram
+
+    - match:
+        severity: load_mssql
       continue: true
       receiver: telegram
 

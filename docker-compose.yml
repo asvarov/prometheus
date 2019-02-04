@@ -31,22 +31,33 @@ services:
       - back-tier
     restart: always
 
-  node-exporter:
-    image: prom/node-exporter
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command: 
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
-    networks:
-      - back-tier
-    restart: always
+#  node-exporter:
+#    image: prom/node-exporter
+#    volumes:
+#      - /proc:/host/proc:ro
+#      - /sys:/host/sys:ro
+#      - /:/rootfs:ro
+#    command: 
+#      - '--path.procfs=/host/proc' 
+#      - '--path.sysfs=/host/sys'
+#      - --collector.filesystem.ignored-mount-points
+#      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+#    ports:
+#      - 9100:9100
+#    networks:
+#      - back-tier
+#    restart: always
+
+#  mysql-exporter:
+#    image: prom/mysqld-exporter
+#    environment:
+#      - DATA_SOURCE_NAME=monitor:P@ssw0rd@(192.168.10.51):3306)/test"
+#    ports:
+#      - 9104:9104
+#    networks:
+#      - back-tier
+#    restart: always
+
 
   alertmanager:
     image: prom/alertmanager
@@ -84,6 +95,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-azure-monitor-datasource
     env_file:
       - ./grafana/config.monitoring
     networks:
@@ -110,3 +123,18 @@ services:
       - front-tier
     depends_on:
       - alertmanager
+    restart: always
+
+  mssql-exporter:
+    image: awaragi/prometheus-mssql-exporter
+    environment:
+      - SERVER=192.168.10.250
+      - USERNAME=mssqlview # https://www.youtube.com/watch?v=aU8RhjdkCoE
+      - PASSWORD=P@ssw0rd
+      - DEBUG=app
+    ports:
+      - 4000:4000
+    networks:
+      - back-tier
+    restart: always
+

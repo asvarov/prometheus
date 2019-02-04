@@ -24,16 +24,12 @@ scrape_configs:
            labels:
              group: 'host'
 
-  - job_name: 'b2b-01'
+  - job_name: 'b2b'
     scrape_interval: 5s
     static_configs:
          - targets: ['b2b-01.test.lab:9100']
            labels:
              group: 'targets'
-
-  - job_name: 'b2b-02'
-    scrape_interval: 5s
-    static_configs:
          - targets: ['b2b-02.test.lab:9100']
            labels:
              group: 'targets'
@@ -44,3 +40,43 @@ scrape_configs:
          - targets: ['192.168.10.52:9100']
            labels:
              group: 'targets'
+
+  - job_name: 'b2b-02_db'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-02.test.lab:9104']
+           labels:
+             group: 'targets'
+             alias: db
+
+  - job_name: 'b2b-01_db'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-01.test.lab:9104']
+           labels:
+             group: 'targets'
+             alias: db
+
+  - job_name: 'b2b-01_httpd'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-01.test.lab:9117']
+           labels:
+             group: 'targets'
+             alias: httpd
+
+  - job_name: 'b2b-02_httpd'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['b2b-02.test.lab:9117']
+           labels:
+             group: 'targets'
+             alias: httpd
+
+  - job_name: 'mssql_cluster'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['192.168.10.52:4000']
+           labels:
+             group: 'targets'
+             alias: mssql
